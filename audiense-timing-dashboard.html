@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimal Posting Times Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            background: #F7F7F7;
+            color: #6D838B;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            gap: 12px;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 16px;
+            padding: 40px 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 12px rgba(109, 131, 139, 0.08);
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2D4A52;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            font-weight: 400;
+            color: #6D838B;
+        }
+
+        .clusters-grid {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+        }
+
+        .cluster-card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(109, 131, 139, 0.08);
+            border: 1px solid #E8F0F2;
+            position: relative;
+        }
+
+        .cluster-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3578E5, #5B9BF0);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .cluster-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2D4A52;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cluster-name .material-icons {
+            color: #3578E5;
+            font-size: 24px;
+        }
+
+        .users-count {
+            font-size: 14px;
+            color: #6D838B;
+            margin-bottom: 24px;
+            padding: 8px 16px;
+            background: #F0F4F5;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .timing-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2D4A52;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title .material-icons {
+            color: #3578E5;
+            font-size: 20px;
+        }
+
+        .timing-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .timing-item {
+            padding: 16px;
+            background: linear-gradient(135deg, #F8FAFB 0%, #F0F4F5 100%);
+            border-radius: 8px;
+            border-left: 4px solid #3578E5;
+        }
+
+        .timing-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #6D838B;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .timing-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2D4A52;
+        }
+
+        .data-foundation {
+            background: #F8FAFB;
+            border: 1px solid #E8F0F2;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .foundation-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2D4A52;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .foundation-title .material-icons {
+            font-size: 16px;
+            color: #6D838B;
+        }
+
+        .uniqueness-item {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #6D838B;
+        }
+
+        .uniqueness-value {
+            font-weight: 600;
+            color: #2D4A52;
+        }
+
+        .positive-diff {
+            color: #10B981;
+        }
+
+        .negative-diff {
+            color: #EF4444;
+        }
+
+        .rationale {
+            background: white;
+            border: 1px solid #E8F0F2;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .rationale-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2D4A52;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rationale-title .material-icons {
+            font-size: 16px;
+            color: #6D838B;
+        }
+
+        .rationale-text {
+            font-size: 14px;
+            color: #6D838B;
+            line-height: 1.6;
+        }
+
+        .divider {
+            grid-column: 1 / -1;
+            height: 1px;
+            background: #E8F0F2;
+            margin: 32px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+                gap: 8px;
+            }
+
+            .header {
+                padding: 24px 16px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .clusters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cluster-card {
+                padding: 24px 16px;
+            }
+
+            .timing-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1 class="title">Optimal Posting Times Analysis</h1>
+            <p class="subtitle">Data-Driven Timing Strategy for [Report Name] Audience Clusters</p>
+        </div>
+
+        <!-- Clusters Grid -->
+        <div class="clusters-grid">
+            <!-- Cluster Card Template -->
+            <div class="cluster-card">
+                <div class="cluster-name">
+                    [Cluster Name]
+                </div>
+                <div class="users-count">[Number] Users</div>
+                
+                <div class="timing-section">
+                    <div class="section-title">
+                        Optimal Posting Time
+                    </div>
+                    
+                    <div class="timing-details">
+                        <div class="timing-item">
+                            <div class="timing-label">Best Day</div>
+                            <div class="timing-value">[Day Name]</div>
+                        </div>
+                        <div class="timing-item">
+                            <div class="timing-label">Best Time</div>
+                            <div class="timing-value">[HH:MM]</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-foundation">
+                    <div class="foundation-title">
+                        Data Foundation
+                    </div>
+                    <div class="uniqueness-item">
+                        <strong>Day Uniqueness:</strong> 
+                        <span class="uniqueness-value">[Cluster %] vs [Baseline %] = <span class="positive-diff">[+/-X.XX% difference]</span></span>
+                    </div>
+                    <div class="uniqueness-item">
+                        <strong>Time Uniqueness:</strong> 
+                        <span class="uniqueness-value">[Cluster %] vs [Baseline %] = <span class="positive-diff">[+/-X.XX% difference]</span></span>
+                    </div>
+                </div>
+
+                <div class="rationale">
+                    <div class="rationale-title">
+                        Strategic Rationale
+                    </div>
+                    <div class="rationale-text">
+                        [Behavioral explanation of why this timing maximizes engagement for this specific cluster based on demographics, activity patterns, and uniqueness advantage over baseline audience]
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional cluster cards would be added here following the same structure -->
+            
+        </div>
+    </div>
+
+    <script>
+        // Template functionality for dynamic content replacement
+        function updateClusterData(clusterData) {
+            // This function would be used to populate the template with actual data
+            // clusterData should be an array of cluster objects with the required properties
+            
+            const clustersGrid = document.querySelector('.clusters-grid');
+            clustersGrid.innerHTML = ''; // Clear existing content
+            
+            clusterData.forEach(cluster => {
+                const clusterCard = createClusterCard(cluster);
+                clustersGrid.appendChild(clusterCard);
+            });
+        }
+        
+        function createClusterCard(cluster) {
+            const card = document.createElement('div');
+            card.className = 'cluster-card';
+            
+            card.innerHTML = `
+                <div class="cluster-name">
+                    ${cluster.name}
+                </div>
+                <div class="users-count">${cluster.userCount} Users</div>
+                
+                <div class="timing-section">
+                    <div class="section-title">
+                        Optimal Posting Time
+                    </div>
+                    
+                    <div class="timing-details">
+                        <div class="timing-item">
+                            <div class="timing-label">Best Day</div>
+                            <div class="timing-value">${cluster.bestDay}</div>
+                        </div>
+                        <div class="timing-item">
+                            <div class="timing-label">Best Time</div>
+                            <div class="timing-value">${cluster.bestTime}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-foundation">
+                    <div class="foundation-title">
+                        Data Foundation
+                    </div>
+                    <div class="uniqueness-item">
+                        <strong>Day Uniqueness:</strong> 
+                        <span class="uniqueness-value">${cluster.dayUniqueness.cluster}% vs ${cluster.dayUniqueness.baseline}% = 
+                        <span class="${cluster.dayUniqueness.difference >= 0 ? 'positive-diff' : 'negative-diff'}">${cluster.dayUniqueness.difference > 0 ? '+' : ''}${cluster.dayUniqueness.difference}%</span></span>
+                    </div>
+                    <div class="uniqueness-item">
+                        <strong>Time Uniqueness:</strong> 
+                        <span class="uniqueness-value">${cluster.timeUniqueness.cluster}% vs ${cluster.timeUniqueness.baseline}% = 
+                        <span class="${cluster.timeUniqueness.difference >= 0 ? 'positive-diff' : 'negative-diff'}">${cluster.timeUniqueness.difference > 0 ? '+' : ''}${cluster.timeUniqueness.difference}%</span></span>
+                    </div>
+                </div>
+
+                <div class="rationale">
+                    <div class="rationale-title">
+                        <span class="material-icons">insights</span>
+                        Strategic Rationale
+                    </div>
+                    <div class="rationale-text">
+                        ${cluster.rationale}
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        // Example usage (uncomment to test with sample data):
+        /*
+        const sampleData = [
+            {
+                name: "Tech Enthusiasts",
+                userCount: "12,547",
+                bestDay: "Tuesday",
+                bestTime: "14:30",
+                dayUniqueness: {
+                    cluster: 18.5,
+                    baseline: 14.3,
+                    difference: 4.2
+                },
+                timeUniqueness: {
+                    cluster: 22.1,
+                    baseline: 16.8,
+                    difference: 5.3
+                },
+                rationale: "This cluster shows peak engagement during mid-week professional hours, with significantly higher activity on Tuesday afternoons when they're likely researching new technologies and tools."
+            }
+        ];
+        
+        updateClusterData(sampleData);
+        */
+    </script>
+</body>
+</html>
