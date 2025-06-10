@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Media Channels Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            background: #F7F7F7;
+            color: #6D838B;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            gap: 12px;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 16px;
+            padding: 40px 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 12px rgba(109, 131, 139, 0.08);
+            text-align: center;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2D4A52;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            font-weight: 400;
+            color: #6D838B;
+        }
+
+        .filters-section {
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 2px 12px rgba(109, 131, 139, 0.08);
+            border: 1px solid #E8F0F2;
+        }
+
+        .filters-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2D4A52;
+            margin-bottom: 24px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #3578E5 0%, #5B9BF0 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(53, 120, 229, 0.3);
+        }
+
+        .tab-button:not(.active) {
+            background: linear-gradient(135deg, #F8FAFB 0%, #F0F4F5 100%);
+            color: #6D838B;
+            border: 1px solid #E8F0F2;
+        }
+
+        .tab-button:hover:not(.active) {
+            background: linear-gradient(135deg, #E8F3FE 0%, #D6E9FC 100%);
+            color: #3578E5;
+            transform: translateY(-2px);
+        }
+
+        .tab-button .material-icons {
+            font-size: 18px;
+        }
+
+        .results-section {
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(109, 131, 139, 0.08);
+            border: 1px solid #E8F0F2;
+            position: relative;
+        }
+
+        .results-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3578E5, #5B9BF0);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .results-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2D4A52;
+        }
+
+        .results-count {
+            font-size: 14px;
+            color: #6D838B;
+            background: #F0F4F5;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .media-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .media-item {
+            background: linear-gradient(135deg, #F8FAFB 0%, #F0F4F5 100%);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #3578E5;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .media-item:hover {
+            background: linear-gradient(135deg, #E8F3FE 0%, #D6E9FC 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(53, 120, 229, 0.15);
+        }
+
+        .media-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .media-left {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            gap: 12px;
+        }
+
+        .media-rank {
+            background: white;
+            color: #3578E5;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 12px;
+            min-width: 32px;
+            text-align: center;
+            border: 1px solid #E8F0F2;
+            flex-shrink: 0;
+        }
+
+        .media-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2D4A52;
+            flex: 1;
+        }
+
+        .affinity-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #3578E5;
+            margin-right: 12px;
+        }
+
+        .media-category {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #6D838B;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            letter-spacing: 0.5px;
+            border: 1px solid #E8F0F2;
+            flex-shrink: 0;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 64px 24px;
+            color: #6D838B;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #F0F4F5;
+            border-top: 3px solid #3578E5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 64px 24px;
+            color: #6D838B;
+        }
+
+        .empty-state .empty-icon {
+            width: 64px;
+            height: 64px;
+            background: #E8F0F2;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            position: relative;
+        }
+
+        .empty-state .empty-icon::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 32px;
+            height: 32px;
+            background: #B8C5CE;
+            border-radius: 50%;
+        }
+
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2D4A52;
+            margin-bottom: 8px;
+        }
+
+        .divider {
+            grid-column: 1 / -1;
+            height: 1px;
+            background: #E8F0F2;
+            margin: 32px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+                gap: 8px;
+            }
+
+            .header {
+                padding: 24px 16px;
+            }
+
+            .title {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .filters-section, .results-section {
+                padding: 24px 16px;
+            }
+
+            .filter-tabs {
+                gap: 8px;
+            }
+
+            .tab-button {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+
+            .media-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .media-item {
+                padding: 16px;
+            }
+
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1 class="title">Top Media Channels Analysis</h1>
+            <p class="subtitle">Prioritized media channels based on audience affinity and uniqueness score</p>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <div class="filters-title">
+                Filter by Media Type
+            </div>
+            <div class="filter-tabs">
+                <button class="tab-button active" data-filter="all">
+                    All Media
+                </button>
+                <button class="tab-button" data-filter="tv">
+                    TV
+                </button>
+                <button class="tab-button" data-filter="radio">
+                    Radio
+                </button>
+                <button class="tab-button" data-filter="newspapers">
+                    Newspapers
+                </button>
+                <button class="tab-button" data-filter="magazines">
+                    Magazines
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section">
+            <div class="results-header">
+                <div class="results-title">
+                    Media Channel Rankings
+                </div>
+                <div class="results-count" id="resultsCount">Top 20 Results</div>
+            </div>
+
+            <!-- Loading State -->
+            <div class="loading-state" id="loadingState">
+                <div class="loading-spinner"></div>
+                <h3>Analyzing audience data...</h3>
+                <p>Processing media channel affinity scores</p>
+            </div>
+
+            <!-- Media Grid -->
+            <div class="media-grid" id="mediaGrid" style="display: none;">
+                <!-- Sample data - replace with actual Audiense data -->
+                <div class="media-item" data-category="magazines">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">1</div>
+                            <div class="media-name">TechCrunch</div>
+                        </div>
+                        <div class="affinity-value">87.3%</div>
+                        <div class="media-category">Magazine</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="magazines">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">2</div>
+                            <div class="media-name">Wired</div>
+                        </div>
+                        <div class="affinity-value">84.6%</div>
+                        <div class="media-category">Magazine</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="magazines">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">3</div>
+                            <div class="media-name">MIT Technology Review</div>
+                        </div>
+                        <div class="affinity-value">82.1%</div>
+                        <div class="media-category">Magazine</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="newspapers">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">4</div>
+                            <div class="media-name">The Verge</div>
+                        </div>
+                        <div class="affinity-value">79.4%</div>
+                        <div class="media-category">Newspaper</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="newspapers">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">5</div>
+                            <div class="media-name">Ars Technica</div>
+                        </div>
+                        <div class="affinity-value">76.8%</div>
+                        <div class="media-category">Newspaper</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="magazines">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">6</div>
+                            <div class="media-name">Fast Company</div>
+                        </div>
+                        <div class="affinity-value">74.2%</div>
+                        <div class="media-category">Magazine</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="newspapers">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">7</div>
+                            <div class="media-name">VentureBeat</div>
+                        </div>
+                        <div class="affinity-value">71.9%</div>
+                        <div class="media-category">Newspaper</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="tv">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">8</div>
+                            <div class="media-name">CNBC Tech</div>
+                        </div>
+                        <div class="affinity-value">69.5%</div>
+                        <div class="media-category">TV</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="magazines">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">9</div>
+                            <div class="media-name">IEEE Spectrum</div>
+                        </div>
+                        <div class="affinity-value">67.3%</div>
+                        <div class="media-category">Magazine</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="newspapers">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">10</div>
+                            <div class="media-name">ZDNet</div>
+                        </div>
+                        <div class="affinity-value">65.1%</div>
+                        <div class="media-category">Newspaper</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="magazines">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">11</div>
+                            <div class="media-name">Harvard Business Review</div>
+                        </div>
+                        <div class="affinity-value">62.7%</div>
+                        <div class="media-category">Magazine</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="newspapers">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">12</div>
+                            <div class="media-name">TechTarget</div>
+                        </div>
+                        <div class="affinity-value">60.4%</div>
+                        <div class="media-category">Newspaper</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="tv">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">13</div>
+                            <div class="media-name">Bloomberg Technology</div>
+                        </div>
+                        <div class="affinity-value">58.2%</div>
+                        <div class="media-category">TV</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="magazines">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">14</div>
+                            <div class="media-name">Scientific American</div>
+                        </div>
+                        <div class="affinity-value">56.0%</div>
+                        <div class="media-category">Magazine</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="radio">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">15</div>
+                            <div class="media-name">NPR Tech</div>
+                        </div>
+                        <div class="affinity-value">53.8%</div>
+                        <div class="media-category">Radio</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="newspapers">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">16</div>
+                            <div class="media-name">InfoWorld</div>
+                        </div>
+                        <div class="affinity-value">51.6%</div>
+                        <div class="media-category">Newspaper</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="magazines">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">17</div>
+                            <div class="media-name">Communications of the ACM</div>
+                        </div>
+                        <div class="affinity-value">49.3%</div>
+                        <div class="media-category">Magazine</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="tv">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">18</div>
+                            <div class="media-name">Tech TV</div>
+                        </div>
+                        <div class="affinity-value">47.1%</div>
+                        <div class="media-category">TV</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="newspapers">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">19</div>
+                            <div class="media-name">ComputerWorld</div>
+                        </div>
+                        <div class="affinity-value">44.9%</div>
+                        <div class="media-category">Newspaper</div>
+                    </div>
+                </div>
+
+                <div class="media-item" data-category="magazines">
+                    <div class="media-header">
+                        <div class="media-left">
+                            <div class="media-rank">20</div>
+                            <div class="media-name">MIT Sloan Management Review</div>
+                        </div>
+                        <div class="affinity-value">42.7%</div>
+                        <div class="media-category">Magazine</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon"></div>
+                <div class="empty-state-title">No media channels found</div>
+                <p>Try selecting a different filter to see results.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulate loading
+        setTimeout(() => {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('mediaGrid').style.display = 'grid';
+        }, 2500);
+
+        // Filter functionality
+        const filterButtons = document.querySelectorAll('.tab-button');
+        const mediaItems = document.querySelectorAll('.media-item');
+        const mediaGrid = document.getElementById('mediaGrid');
+        const emptyState = document.getElementById('emptyState');
+        const resultsCount = document.getElementById('resultsCount');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active button
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                const filter = button.dataset.filter;
+                let visibleCount = 0;
+
+                // Filter media items
+                mediaItems.forEach(item => {
+                    if (filter === 'all' || item.dataset.category === filter) {
+                        item.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Show/hide empty state
+                if (visibleCount === 0) {
+                    mediaGrid.style.display = 'none';
+                    emptyState.style.display = 'block';
+                } else {
+                    mediaGrid.style.display = 'grid';
+                    emptyState.style.display = 'none';
+                }
+
+                // Update results count
+                resultsCount.textContent = visibleCount > 0 ? `${visibleCount} Results` : 'No Results';
+            });
+        });
+
+        // Function to update media data (to be called with actual Audiense data)
+        function updateMediaData(mediaData) {
+            const mediaGrid = document.getElementById('mediaGrid');
+            mediaGrid.innerHTML = '';
+
+            mediaData.forEach((item, index) => {
+                const mediaItem = createMediaItem(item, index + 1);
+                mediaGrid.appendChild(mediaItem);
+            });
+        }
+
+        function createMediaItem(data, rank) {
+            const item = document.createElement('div');
+            item.className = 'media-item';
+            item.dataset.category = data.category.toLowerCase();
+            
+            item.innerHTML = `
+                <div class="media-header">
+                    <div class="media-left">
+                        <div class="media-rank">${rank}</div>
+                        <div class="media-name">${data.name}</div>
+                    </div>
+                    <div class="affinity-value">${data.affinity}%</div>
+                    <div class="media-category">${data.category}</div>
+                </div>
+            `;
+            
+            return item;
+        }
+
+        // Example of how to call the update function with real data:
+        /*
+        const sampleData = [
+            { name: "TechCrunch", affinity: 87.3, category: "Magazine" },
+            { name: "Wired", affinity: 84.6, category: "Magazine" },
+            { name: "The Verge", affinity: 79.4, category: "Newspaper" },
+            // ... more data
+        ];
+        
+        updateMediaData(sampleData);
+        */
+    </script>
+</body>
+</html>
