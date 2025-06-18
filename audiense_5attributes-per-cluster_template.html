@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audience Intelligence Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <style>
+        :root {
+            /* Audiense Brand Colors */
+            --primary-blue: #3578E5;
+            --light-blue: #E8F3FE;
+            --text-primary: #6D838B;
+            --text-dark-900: #1A2B33;
+            --text-light-50: #E8EDEF;
+            --background-main: #F7F7F7;
+            --container-white: #FFFFFF;
+            --divider-color: #E0E0E0;
+            
+            /* Grid System */
+            --base-grid: 8px;
+            --grid-gap: 12px;
+            --max-width: 1440px;
+            
+            /* Typography */
+            --font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-size-base: 16px;
+            --line-height: 1.2;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            font-size: var(--font-size-base);
+            line-height: var(--line-height);
+            background-color: var(--background-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 calc(var(--base-grid) * 2);
+        }
+
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #4A90E2 100%);
+            color: white;
+            text-align: center;
+            padding: calc(var(--base-grid) * 6) 0;
+            margin-bottom: calc(var(--base-grid) * 4);
+        }
+
+        .header h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: calc(var(--base-grid) * 2);
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        /* Grid System */
+        .clusters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: calc(var(--base-grid) * 3);
+            margin-bottom: calc(var(--base-grid) * 6);
+        }
+
+        /* Cluster Cards */
+        .cluster-card {
+            background: var(--container-white);
+            border-radius: calc(var(--base-grid) * 2);
+            padding: calc(var(--base-grid) * 4);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #f0f0f0;
+        }
+
+        .cluster-card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .cluster-header {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: calc(var(--base-grid) * 3);
+            padding-bottom: calc(var(--base-grid) * 2);
+            border-bottom: 2px solid var(--primary-blue);
+        }
+
+        /* Attributes List */
+        .attributes-list {
+            margin-bottom: calc(var(--base-grid) * 3);
+        }
+
+        .attribute-item {
+            padding: calc(var(--base-grid) * 2) 0;
+            border-bottom: 1px solid var(--divider-color);
+        }
+
+        .attribute-item:last-child {
+            border-bottom: none;
+        }
+
+        .attribute-category {
+            font-weight: 600;
+            color: var(--primary-blue);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: calc(var(--base-grid) / 2);
+        }
+
+        .attribute-description {
+            color: var(--text-primary);
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        /* Strategic Insight Box */
+        .strategic-insight {
+            background: var(--light-blue);
+            border-radius: calc(var(--base-grid) * 2);
+            padding: calc(var(--base-grid) * 3);
+            border-left: 4px solid var(--primary-blue);
+            margin-top: calc(var(--base-grid) * 2);
+        }
+
+        .insight-label {
+            font-weight: 600;
+            color: var(--primary-blue);
+            font-size: 1rem;
+            margin-bottom: calc(var(--base-grid));
+            display: flex;
+            align-items: center;
+            gap: calc(var(--base-grid));
+        }
+
+        .insight-text {
+            color: var(--text-primary);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        /* Summary Section */
+        .summary-section {
+            background: var(--container-white);
+            border-radius: calc(var(--base-grid) * 2);
+            padding: calc(var(--base-grid) * 4);
+            margin-bottom: calc(var(--base-grid) * 4);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .summary-title {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            margin-bottom: calc(var(--base-grid) * 3);
+            text-align: center;
+        }
+
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: calc(var(--base-grid) * 2);
+        }
+
+        .recommendation-card {
+            background: var(--light-blue);
+            border-radius: calc(var(--base-grid));
+            padding: calc(var(--base-grid) * 2);
+            border-left: 3px solid var(--primary-blue);
+        }
+
+        .recommendation-title {
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: calc(var(--base-grid));
+        }
+
+        .recommendation-text {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .clusters-grid {
+                grid-template-columns: 1fr;
+                gap: calc(var(--base-grid) * 2);
+            }
+            
+            .cluster-card {
+                padding: calc(var(--base-grid) * 3);
+            }
+            
+            .container {
+                padding: 0 calc(var(--base-grid));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: calc(var(--base-grid) * 4) 0;
+            }
+            
+            .cluster-header {
+                font-size: 1.3rem;
+            }
+            
+            .attribute-description {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            color: var(--text-primary);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--light-blue);
+            border-top: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: calc(var(--base-grid) * 2);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .cluster-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                break-inside: avoid;
+                margin-bottom: calc(var(--base-grid) * 2);
+            }
+            
+            .header {
+                background: var(--primary-blue) !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container">
+            <h1>Audience Intelligence Report</h1>
+            <p>Strategic Cluster Analysis & Overindexing Insights</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Loading State (remove when data is loaded) -->
+        <div class="loading" id="loadingState">
+            <div class="loading-spinner"></div>
+            <span>Loading audience insights...</span>
+        </div>
+
+        <!-- Clusters Grid -->
+        <div class="clusters-grid" id="clustersGrid" style="display: none;">
+            <!-- Cluster cards will be dynamically inserted here -->
+        </div>
+
+        <!-- Summary Section -->
+        <section class="summary-section" id="summarySection" style="display: none;">
+            <h2 class="summary-title">Strategic Recommendations</h2>
+            <div class="recommendations-grid" id="recommendationsGrid">
+                <!-- Recommendations will be dynamically inserted here -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Sample data structure - replace with actual data
+        const sampleData = {
+            clusters: [
+                {
+                    name: "Tech-Savvy Professionals",
+                    attributes: [
+                        {
+                            category: "Demographics",
+                            description: "Urban millennials - significantly concentrated in metropolitan areas"
+                        },
+                        {
+                            category: "Professional",
+                            description: "Technology sector employment - notably higher representation"
+                        },
+                        {
+                            category: "Interests",
+                            description: "Innovation and startups - markedly elevated engagement"
+                        },
+                        {
+                            category: "Media Consumption",
+                            description: "Podcast listening - substantially above baseline"
+                        },
+                        {
+                            category: "Buying Behavior",
+                            description: "Early adopter mindset - considerably more likely to try new products"
+                        }
+                    ],
+                    insight: "This cluster represents forward-thinking professionals who actively seek innovative solutions and are willing to invest in cutting-edge technology. They respond well to thought leadership content and peer recommendations, making them ideal for B2B tech campaigns focused on efficiency and innovation."
+                }
+            ],
+            recommendations: [
+                {
+                    title: "Targeted Messaging Strategy",
+                    description: "Develop cluster-specific messaging that resonates with each audience's unique overindexing characteristics."
+                },
+                {
+                    title: "Channel Optimization",
+                    description: "Prioritize media channels and platforms where each cluster shows notably higher engagement patterns."
+                },
+                {
+                    title: "Content Personalization",
+                    description: "Create content themes that align with the significantly elevated interest areas of each segment."
+                }
+            ]
+        };
+
+        // Function to render cluster cards
+        function renderClusters(clusters) {
+            const clustersGrid = document.getElementById('clustersGrid');
+            
+            clusters.forEach(cluster => {
+                const clusterCard = document.createElement('div');
+                clusterCard.className = 'cluster-card';
+                
+                clusterCard.innerHTML = `
+                    <h3 class="cluster-header">${cluster.name}</h3>
+                    <div class="attributes-list">
+                        ${cluster.attributes.map(attr => `
+                            <div class="attribute-item">
+                                <div class="attribute-category">${attr.category}</div>
+                                <div class="attribute-description">${attr.description}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="strategic-insight">
+                        <div class="insight-label">
+                            <span class="material-icons-outlined">lightbulb</span>
+                            Strategic Insight
+                        </div>
+                        <div class="insight-text">${cluster.insight}</div>
+                    </div>
+                `;
+                
+                clustersGrid.appendChild(clusterCard);
+            });
+        }
+
+        // Function to render recommendations
+        function renderRecommendations(recommendations) {
+            const recommendationsGrid = document.getElementById('recommendationsGrid');
+            
+            recommendations.forEach(rec => {
+                const recCard = document.createElement('div');
+                recCard.className = 'recommendation-card';
+                
+                recCard.innerHTML = `
+                    <div class="recommendation-title">${rec.title}</div>
+                    <div class="recommendation-text">${rec.description}</div>
+                `;
+                
+                recommendationsGrid.appendChild(recCard);
+            });
+        }
+
+        // Initialize the report
+        function initializeReport(data = sampleData) {
+            // Hide loading state
+            document.getElementById('loadingState').style.display = 'none';
+            
+            // Show content sections
+            document.getElementById('clustersGrid').style.display = 'grid';
+            document.getElementById('summarySection').style.display = 'block';
+            
+            // Render data
+            renderClusters(data.clusters);
+            renderRecommendations(data.recommendations);
+        }
+
+        // Load the report (replace with actual data loading)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate loading delay
+            setTimeout(() => {
+                initializeReport();
+            }, 1000);
+        });
+
+        // Function to update report with new data
+        function updateReport(newData) {
+            // Clear existing content
+            document.getElementById('clustersGrid').innerHTML = '';
+            document.getElementById('recommendationsGrid').innerHTML = '';
+            
+            // Render new data
+            renderClusters(newData.clusters);
+            renderRecommendations(newData.recommendations);
+        }
+
+        // Export function for external use
+        window.AudienseReport = {
+            initialize: initializeReport,
+            update: updateReport
+        };
+    </script>
+</body>
+</html>
