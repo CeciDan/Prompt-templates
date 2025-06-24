@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disney+ Fandom Cluster Analyzer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #3578E5;
+            --secondary-blue: #E8F3FE;
+            --text-600: #6D838B;
+            --text-700: #5A707A;
+            --text-800: #475A66;
+            --text-900: #34434F;
+            --text-500: #809AAA;
+            --text-400: #93ACBB;
+            --text-300: #A6BECC;
+            --text-200: #B9D0DD;
+            --text-100: #CCE2EE;
+            --text-50: #DFE9F0;
+            --background: #F7F7F7;
+            --container-bg: #FFFFFF;
+            --border: #E0E0E0;
+            --grid-gap: 12px;
+            --base-unit: 8px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background);
+            color: var(--text-900);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            gap: var(--grid-gap);
+        }
+
+        .card {
+            background: var(--container-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(109, 131, 139, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, #3578E5 0%, #4A8CF7 100%);
+            color: white;
+        }
+
+        .card-content {
+            padding: 24px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2968D4;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-blue);
+            color: var(--primary-blue);
+        }
+
+        .btn-secondary:hover {
+            background: #D6E9FD;
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, var(--container-bg) 0%, #F0F8FF 100%);
+            border-radius: 8px;
+            padding: 32px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-900);
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: var(--text-600);
+        }
+
+        .report-info {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #E8F3FE 0%, #F0F8FF 100%);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--primary-blue);
+        }
+
+        .report-info h2 {
+            color: var(--text-900);
+            margin-bottom: 8px;
+            font-size: 20px;
+        }
+
+        .report-info p {
+            color: var(--text-700);
+            margin-bottom: 4px;
+        }
+
+        .cluster-grid {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .cluster-card {
+            background: var(--container-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(109, 131, 139, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+        }
+
+        .cluster-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(109, 131, 139, 0.15);
+        }
+
+        .cluster-card.strongest-fandom {
+            border: 2px solid var(--primary-blue);
+            box-shadow: 0 4px 16px rgba(53, 120, 229, 0.2);
+        }
+
+        .cluster-header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--text-50) 0%, var(--text-100) 100%);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cluster-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-900);
+            margin-bottom: 4px;
+        }
+
+        .cluster-size {
+            font-size: 12px;
+            color: var(--text-600);
+            font-weight: 500;
+        }
+
+        .fandom-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: linear-gradient(135deg, #10B981 0%, #047857 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cluster-metrics {
+            padding: 20px;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #F5F5F5;
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--text-700);
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-900);
+        }
+
+        .affinity-high { color: #10B981; font-weight: 700; }
+        .affinity-elevated { color: #F59E0B; font-weight: 700; }
+        .affinity-present { color: #8B5CF6; font-weight: 700; }
+        .affinity-emerging { color: #6B7280; }
+
+        .engagement-indicators {
+            margin-top: 16px;
+        }
+
+        .engagement-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            background: var(--secondary-blue);
+            color: var(--primary-blue);
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 2px;
+            font-weight: 500;
+        }
+
+        .analysis-summary {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, var(--container-bg) 0%, #F8FAFF 100%);
+            border-radius: 8px;
+            padding: 32px;
+            border: 2px solid var(--primary-blue);
+            margin-bottom: 32px;
+        }
+
+        .summary-header {
+            margin-bottom: 24px;
+        }
+
+        .summary-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-900);
+            margin-bottom: 8px;
+        }
+
+        .summary-subtitle {
+            font-size: 18px;
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .summary-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .summary-section h4 {
+            color: var(--text-800);
+            margin-bottom: 16px;
+            font-size: 16px;
+        }
+
+        .summary-section p {
+            color: var(--text-700);
+            line-height: 1.6;
+        }
+
+        .tab-container {
+            grid-column: 1 / -1;
+            margin-bottom: 24px;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            gap: 0;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            color: var(--text-600);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .tab.active {
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
+        }
+
+        .tab-content {
+            padding: 24px 0;
+        }
+
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .recommendation-card {
+            background: var(--container-bg);
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(109, 131, 139, 0.1);
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .recommendation-card h4 {
+            color: var(--text-900);
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .recommendation-card p {
+            color: var(--text-700);
+            line-height: 1.6;
+        }
+
+        .demographic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .demographic-item {
+            text-align: center;
+            padding: 16px;
+            background: var(--text-50);
+            border-radius: 6px;
+        }
+
+        .demographic-item .value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 4px;
+        }
+
+        .demographic-item .label {
+            font-size: 12px;
+            color: var(--text-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+            
+            .cluster-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-content {
+                grid-template-columns: 1fr;
+            }
+
+            .recommendations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="grid">
+            <div class="header">
+                <h1>Disney+ Fandom Cluster Analyzer</h1>
+                <p>Brand Intelligence Analysis Results</p>
+            </div>
+
+            <div class="report-info">
+                <h2>Disney+ - ES Report Analysis</h2>
+                <p><strong>Report ID:</strong> 67dab66332efc375d712410e</p>
+                <p><strong>Total Audience:</strong> 10,626 users</p>
+                <p><strong>Segmentation:</strong> 8 clusters based on affinities</p>
+                <p><strong>Analysis Date:</strong> March 2025</p>
+            </div>
+
+            <div class="analysis-summary">
+                <div class="summary-header">
+                    <div class="summary-title">Strongest Fandom Cluster Identified</div>
+                    <div class="summary-subtitle">Disney & Marvel 🏰</div>
+                </div>
+                <div class="summary-content">
+                    <div class="summary-section">
+                        <h4>Fandom Strength Rationale</h4>
+                        <p>The Disney & Marvel cluster demonstrates the strongest Disney+ fandom with <strong>exceptionally high</strong> brand affinity. Disney+ Latinoamérica ranks as the 2nd highest brand affinity (5.63 with 65.82% uniqueness) among all examined clusters. This represents the exclusive location of meaningful Disney+ brand presence across the entire segmented audience, while being completely absent from all other clusters.</p>
+                    </div>
+                    <div class="summary-section">
+                        <h4>Strategic Opportunity</h4>
+                        <p>Leverage this highly engaged cluster (1,120 users, 10.5% of total audience) for premium content promotion, exclusive previews, and community building initiatives. Their strong engagement patterns and cohesive Disney entertainment ecosystem indicate high potential for brand advocacy and cross-catalog viewing promotion.</p>
+                    </div>
+                </div>
+                
+                <div class="demographic-grid">
+                    <div class="demographic-item">
+                        <div class="value">54.7%</div>
+                        <div class="label">Ages 25-34</div>
+                    </div>
+                    <div class="demographic-item">
+                        <div class="value">100%</div>
+                        <div class="label">Spanish Market</div>
+                    </div>
+                    <div class="demographic-item">
+                        <div class="value">63.6%</div>
+                        <div class="label">High Openness</div>
+                    </div>
+                    <div class="demographic-item">
+                        <div class="value">33.3%</div>
+                        <div class="label">Movies/TV Interest</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            console.log('Tab switching functionality removed - single view only');
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Disney+ Fandom Analysis Results Loaded');
+            
+            // Add hover effects to cluster cards
+            document.querySelectorAll('.cluster-card').forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-4px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
